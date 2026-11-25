@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html><body style="background:#000;color:#0f0;font-family:sans-serif">
+<h2 id="s">Listening…</h2>
+<script>
+const WAKE = "hey assistant";
+const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+const rec = new R();
+rec.continuous = true; rec.interimResults = false; rec.lang = "en-IN";
+
+function say(t){ speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
+
+rec.onresult = e => {
+  const text = e.results[e.results.length-1][0].transcript.toLowerCase().trim();
+  document.getElementById("s").textContent = text;
+  if (!text.includes(WAKE)) return;
+  const cmd = text.split(WAKE)[1].trim();
+  if (cmd.includes("time")) say("It is " + new Date().toLocaleTimeString());
+  else say("You said " + cmd);   // replace with an API call later
+};
+rec.onend = () => rec.start();        // browsers stop it; restart forever
+rec.onerror = () => setTimeout(()=>rec.start(), 1000);
+rec.start();
+</script></body></html>
